@@ -79,12 +79,12 @@ export default {
   computed: {
     changedData() {
       const newArr = this.dataArr.map(el => {
-        // console.log('qweqweqweqw', el.content);
         el.contentPostTones.forEach(strEl => {
           this.findedStr = el.content.substr(strEl.position, strEl.length)
+          console.log(this.findedStr);
+          el.content.replace(this.findedStr, '123')
         })
-        // console.log('12312312', this.findedStr);
-        el.content.replace(this.findedStr, '123')
+        return el
       })
       console.log(newArr);
       return newArr
