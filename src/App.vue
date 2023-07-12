@@ -1,18 +1,98 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <ul>
+      <li v-for="(obj, i) in changedData" :key="i">
+        {{ obj.content }}
+      </li>
+    </ul>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
+  data() {
+    return {
+      dataArr: [
+        {
+          date: "1986-08-31T23:55:22Z",
+          authorName: "Успенский",
+          authorUrl: "https://www.happy-kids.ru/page.php?id=1105",
+          content: "Я был когда-то странной\nИгрушкой безымянной,\nК которой в магазине\nНикто не подойдет.\nТеперь я Чебурашка,\nМне каждая дворняжка\nПри встрече сразу\nЛапу подает!\n\nМне не везло сначала,\nИ даже так бывало:\nКо мне на день рожденья\nНикто не приходил.\nТеперь я вместе с Геной\nОн не обыкновенный,\nОн самый лучший\nВ мире крокодил! ",
+          contentPostTones: [
+            {
+              position: 0,
+              tone: 0.5,
+              length: 1
+            },
+            {
+              position: 24,
+              tone: -0.6,
+              length: 8
+            },
+            {
+              position: 66,
+              tone: 0.3,
+              length: 5
+            },
+            {
+              position: 94,
+              tone: 0.9,
+              length: 9
+            },
+            {
+              position: 109,
+              tone: 1,
+              length: 16
+            },
+            {
+              position: 144,
+              tone: 1,
+              length: 4
+            },
+            {
+              position: 158,
+              tone: 0,
+              length: 3
+            },
+            {
+              position: 199,
+              tone: 0.3,
+              length: 6
+            },
+            {
+              position: 260,
+              tone: 0.7,
+              length: 5
+            },
+            {
+              position: 309,
+              tone: 0.3,
+              length: 8
+            }
+          ]
+        }
+      ],
+      findedStr: '',
+    }
+  },
+  computed: {
+    changedData() {
+      const newArr = this.dataArr.map(el => {
+        // console.log('qweqweqweqw', el.content);
+        el.contentPostTones.forEach(strEl => {
+          this.findedStr = el.content.substr(strEl.position, strEl.length)
+        })
+        // console.log('12312312', this.findedStr);
+        el.content.replace(this.findedStr, '123')
+      })
+      console.log(newArr);
+      return newArr
+    },
+  },
+  // mounted() {
+  //   console.log(this.changedData, this.dataArr);
+  // }
 }
 </script>
 
