@@ -2,97 +2,43 @@
   <div id="app">
     <ul>
       <li v-for="(obj, i) in changedData" :key="i">
-        {{ obj.content }}
+        <div v-html="obj.content"></div>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
+import json from '@/db/feed.json'
 
 export default {
   data() {
     return {
-      dataArr: [
-        {
-          date: "1986-08-31T23:55:22Z",
-          authorName: "Успенский",
-          authorUrl: "https://www.happy-kids.ru/page.php?id=1105",
-          content: "Я был когда-то странной\nИгрушкой безымянной,\nК которой в магазине\nНикто не подойдет.\nТеперь я Чебурашка,\nМне каждая дворняжка\nПри встрече сразу\nЛапу подает!\n\nМне не везло сначала,\nИ даже так бывало:\nКо мне на день рожденья\nНикто не приходил.\nТеперь я вместе с Геной\nОн не обыкновенный,\nОн самый лучший\nВ мире крокодил! ",
-          contentPostTones: [
-            {
-              position: 0,
-              tone: 0.5,
-              length: 1
-            },
-            {
-              position: 24,
-              tone: -0.6,
-              length: 8
-            },
-            {
-              position: 66,
-              tone: 0.3,
-              length: 5
-            },
-            {
-              position: 94,
-              tone: 0.9,
-              length: 9
-            },
-            {
-              position: 109,
-              tone: 1,
-              length: 16
-            },
-            {
-              position: 144,
-              tone: 1,
-              length: 4
-            },
-            {
-              position: 158,
-              tone: 0,
-              length: 3
-            },
-            {
-              position: 199,
-              tone: 0.3,
-              length: 6
-            },
-            {
-              position: 260,
-              tone: 0.7,
-              length: 5
-            },
-            {
-              position: 309,
-              tone: 0.3,
-              length: 8
-            }
-          ]
-        }
-      ],
-      findedStr: '',
+      dataArray: json,
     }
   },
   computed: {
     changedData() {
-      const newArr = this.dataArr.map(el => {
+      return this.dataArray.map(el => {
+        const clearedString = el.content.replace(/\n/g, ' ')
         el.contentPostTones.forEach(strEl => {
-          this.findedStr = el.content.substr(strEl.position, strEl.length)
-          console.log(this.findedStr);
-          el.content.replace(this.findedStr, '123')
+          const findedStr = clearedString.substring(strEl.position, strEl.position + strEl.length)
+          const startStr = clearedString.substring(0, strEl.position)
+          const endStr = clearedString.substring(strEl.position + strEl.length)
+          el.content = el.content.replace(findedStr, `<span style="background-color: rgba(${this.getActuallColor(strEl.tone)}, 0.2)">${findedStr}</span>`)
         })
         return el
       })
-      console.log(newArr);
-      return newArr
     },
   },
-  // mounted() {
-  //   console.log(this.changedData, this.dataArr);
-  // }
+  methods: {
+    getActuallColor(tone) {
+      if (tone < 0) return `255, ${255 * Math.abs(tone)}, 0`
+      if (tone > 0) return `${255 * Math.abs(tone)}, 255, 0`
+      if (tone == 0) return `255, 255, 0`
+    },
+
+  }
 }
 </script>
 
@@ -104,5 +50,11 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+ul {
+  list-style: none;
+}
+li { 
+  padding: 15px;
 }
 </style>
