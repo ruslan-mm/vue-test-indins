@@ -2,7 +2,11 @@
   <div id="app">
     <ul>
       <li v-for="(obj, i) in changedData" :key="i">
-        <div v-html="obj.content"></div>
+        <div>
+          <span>{{ obj.date }} / </span><span><b>{{ obj.authorName }}</b> / </span><a :href="obj.authorUrl">{{ obj.authorUrl }}</a>
+        </div>
+        <p v-html="obj.content"></p>
+        <hr>
       </li>
     </ul>
   </div>
@@ -19,17 +23,22 @@ export default {
   },
   computed: {
     changedData() {
-      return this.dataArray.map(el => {
-        const clearedString = el.content.replace(/\n/g, ' ')
-        el.contentPostTones.forEach(strEl => {
-          const findedStr = clearedString.substring(strEl.position, strEl.position + strEl.length)
-          const startStr = clearedString.substring(0, strEl.position)
-          const endStr = clearedString.substring(strEl.position + strEl.length)
-          el.content = el.content.replace(findedStr, `<span style="background-color: rgba(${this.getActuallColor(strEl.tone)}, 0.2)">${findedStr}</span>`)
+        return this.dataArray.map(el => {
+          let clearedString = el.content.replace("\n", " ").replace( /  +/g, ' ' )
+          let resultString = ""
+          let lastIndex = 0
+          el.contentPostTones.forEach(strEl => {
+            resultString += clearedString.substring(lastIndex, strEl.position)
+            resultString += `<span style="background-color: rgba(${this.getActuallColor(strEl.tone)}, 0.2)">${clearedString.substring(strEl.position, strEl.position + strEl.length)}</span>`
+            lastIndex = strEl.position + strEl.length
+            console.log(resultString);
+          })
+          resultString += clearedString.substring(lastIndex)
+  
+          el.content = resultString
+          return el
         })
-        return el
-      })
-    },
+      },
   },
   methods: {
     getActuallColor(tone) {
@@ -47,14 +56,26 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
   margin-top: 60px;
 }
 ul {
+  margin: 0;
+  padding: 0;
   list-style: none;
 }
-li { 
+li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0; 
   padding: 15px;
+}
+hr {
+  width: 100%;
+}
+a {
+  text-decoration: none;
+  color: inherit;
 }
 </style>
